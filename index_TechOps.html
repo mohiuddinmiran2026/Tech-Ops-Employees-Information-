@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Succession Readiness & Performance Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F4F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EFE9;
+    --border: #E2E0D8;
+    --border2: #CCCABF;
+    --accent: #1B4F8A;
+    --accent-light: #EAF0F9;
+    --accent2: #2E6DB4;
+    --text: #1A1916;
+    --text2: #5A574F;
+    --text3: #8C8980;
+    --success: #1C6B45;
+    --success-bg: #E6F4ED;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+  .topbar { background: var(--accent); height: 6px; width: 100%; }
+  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 32px 0 0; }
+  .header-inner { max-width: 860px; margin: 0 auto; padding: 0 24px 28px; }
+  .header-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-light); color: var(--accent); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; margin-bottom: 14px; }
+  .header h1 { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; color: var(--text); line-height: 1.25; margin-bottom: 10px; }
+  .header p { font-size: 14px; color: var(--text2); max-width: 620px; line-height: 1.65; }
+  .progress-bar-wrap { background: var(--surface); border-bottom: 1px solid var(--border); }
+  .progress-track { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+  .progress-steps { display: flex; overflow-x: auto; scrollbar-width: none; }
+  .progress-steps::-webkit-scrollbar { display: none; }
+  .prog-step { flex: 1; min-width: 100px; display: flex; flex-direction: column; align-items: center; padding: 12px 8px; cursor: pointer; border-bottom: 3px solid transparent; transition: border-color 0.2s; gap: 4px; }
+  .prog-step .pnum { width: 22px; height: 22px; border-radius: 50%; background: var(--surface2); border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text3); transition: all 0.2s; }
+  .prog-step .plabel { font-size: 10px; font-weight: 500; color: var(--text3); text-align: center; line-height: 1.3; }
+  .prog-step.active { border-bottom-color: var(--accent); }
+  .prog-step.active .pnum { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .prog-step.active .plabel { color: var(--accent); }
+  .prog-step.done .pnum { background: var(--success-bg); border-color: var(--success); color: var(--success); }
+  .prog-step.done .plabel { color: var(--success); }
+  .main { max-width: 860px; margin: 0 auto; padding: 32px 24px 80px; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .section-heading { margin-bottom: 24px; }
+  .section-heading h2 { font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400; color: var(--text); margin-bottom: 6px; }
+  .section-heading p { font-size: 13px; color: var(--text2); max-width: 620px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 16px; }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+  .span-2 { grid-column: span 2; }
+  .span-full { grid-column: 1 / -1; }
+  @media (max-width: 600px) { .grid-2, .grid-4 { grid-template-columns: 1fr; } .span-2 { grid-column: span 1; } }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 12px; font-weight: 500; color: var(--text2); letter-spacing: 0.02em; }
+  .field label .req { color: #C0392B; margin-left: 2px; }
+  .field input, .field select, .field textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--surface); transition: border-color 0.15s, box-shadow 0.15s; outline: none; -webkit-appearance: none; appearance: none; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(27,79,138,0.1); }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238C8980' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; }
+  .field .hint { font-size: 11px; color: var(--text3); line-height: 1.5; }
+  .field.error input, .field.error select, .field.error textarea { border-color: #C0392B; }
+  .field .err-msg { font-size: 11px; color: #C0392B; display: none; }
+  .field.error .err-msg { display: block; }
+  .options-grid { display: flex; flex-direction: column; gap: 8px; }
+  .options-grid.horizontal { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .opt-label { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: border-color 0.15s, background 0.15s; font-size: 13.5px; color: var(--text); user-select: none; }
+  .opt-label:hover { border-color: var(--accent2); background: var(--accent-light); }
+  .opt-label input[type="radio"] { display: none; }
+  .opt-dot { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .opt-label input[type="radio"]:checked ~ .opt-dot { border-color: var(--accent); background: var(--accent); }
+  .opt-label input[type="radio"]:checked ~ .opt-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: white; }
+  .opt-label:has(input:checked) { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 500; }
+  .degree-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 12px; }
+  .degree-card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .degree-card-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .q-block { margin-bottom: 20px; }
+  .q-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+  .q-title .req { color: #C0392B; margin-left: 2px; font-size: 13px; }
+  .q-desc { font-size: 12px; color: var(--text3); margin-bottom: 10px; line-height: 1.55; font-style: italic; }
+  .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 22px; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; }
+  .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-outline { background: transparent; color: var(--text2); border-color: var(--border2); }
+  .btn-outline:hover { background: var(--surface2); color: var(--text); }
+  .btn-submit { background: var(--success); color: white; border-color: var(--success); padding: 12px 30px; font-size: 15px; }
+  .btn-submit:hover { opacity: 0.9; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .page-counter { font-size: 12px; color: var(--text3); }
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .success-screen { display: none; text-align: center; padding: 60px 24px; }
+  .success-screen.show { display: block; }
+  .success-icon { width: 64px; height: 64px; background: var(--success-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 28px; color: var(--success); }
+  .success-screen h2 { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; margin-bottom: 10px; }
+  .success-screen p { font-size: 14px; color: var(--text2); max-width: 420px; margin: 0 auto; }
+  .submitting-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: 999; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+  .submitting-overlay.show { display: flex; }
+  .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .submitting-overlay p { font-size: 14px; color: var(--text2); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="topbar"></div>
+
+<div class="submitting-overlay" id="submittingOverlay">
+  <div class="spinner"></div>
+  <p>Submitting your assessment...</p>
+</div>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-badge">&#9679; Confidential Assessment</div>
+    <h1>Employee Succession Readiness<br>&amp; Performance Assessment</h1>
+    <p>This form evaluates employee qualifications, performance, leadership potential, and succession readiness. Please complete all sections carefully. All information is strictly confidential.</p>
+  </div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-track">
+    <div class="progress-steps">
+      <div class="prog-step active" onclick="goToPage(0)" id="ps0"><div class="pnum">1</div><div class="plabel">Employee Info</div></div>
+      <div class="prog-step" onclick="goToPage(1)" id="ps1"><div class="pnum">2</div><div class="plabel">Academic</div></div>
+      <div class="prog-step" onclick="goToPage(2)" id="ps2"><div class="pnum">3</div><div class="plabel">Experience & KPI</div></div>
+      <div class="prog-step" onclick="goToPage(3)" id="ps3"><div class="pnum">4</div><div class="plabel">Leadership</div></div>
+      <div class="prog-step" onclick="goToPage(4)" id="ps4"><div class="pnum">5</div><div class="plabel">Org. Alignment</div></div>
+      <div class="prog-step" onclick="goToPage(5)" id="ps5"><div class="pnum">6</div><div class="plabel">Final Remarks</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- PAGE 0 — EMPLOYEE INFORMATION -->
+<div class="page active" id="page0">
+  <div class="section-heading">
+    <h2>Employee Information</h2>
+    <p>Please complete all fields accurately before proceeding to the assessment sections.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Basic Details</div>
+    <div class="grid-2">
+      <div class="field"><label>Employee Name <span class="req">*</span></label><input type="text" id="emp_name" placeholder="Full official name" required><span class="err-msg">Required</span></div>
+      <div class="field"><label>Employee ID <span class="req">*</span></label><input type="text" id="emp_id" placeholder="Official ID number" required><span class="err-msg">Required</span></div>
+      <div class="field"><label>Department <span class="req">*</span></label><input type="text" id="department" placeholder="Current department" required><span class="err-msg">Required</span></div>
+      <div class="field"><label>Designation <span class="req">*</span></label><input type="text" id="designation" placeholder="Current official designation" required><span class="err-msg">Required</span></div>
+      <div class="field"><label>Current Grade / Level <span class="req">*</span></label><input type="text" id="grade" placeholder="Grade, band, or job level" required><span class="err-msg">Required</span></div>
+      <div class="field"><label>Joining Date <span class="req">*</span></label><input type="date" id="joining_date" required><span class="err-msg">Required</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Evaluator Details</div>
+    <div class="grid-2">
+      <div class="field"><label>Evaluator / Reporting Manager Name <span class="req">*</span></label><input type="text" id="evaluator_name" placeholder="Name of person completing this assessment" required><span class="err-msg">Required</span></div>
+      <div class="field"><label>Evaluation Date <span class="req">*</span></label><input type="date" id="eval_date" required><span class="err-msg">Required</span></div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <span class="page-counter">Step 1 of 6</span>
+    <button class="btn btn-primary" onclick="nextPage(0)">Next &rarr;</button>
+  </div>
+</div>
+
+<!-- PAGE 1 — ACADEMIC QUALIFICATIONS -->
+<div class="page" id="page1">
+  <div class="section-heading">
+    <h2>Academic Qualifications</h2>
+    <p>Fill in details for each qualification. Leave blank or write N/A if not applicable.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Educational Background</div>
+    <div class="degree-card">
+      <div class="degree-card-title"><span class="dot"></span>Master's Degree</div>
+      <div class="grid-4">
+        <div class="field"><label>Degree Name</label><input type="text" id="m_degree" placeholder="e.g. MSc, MBA, MA"></div>
+        <div class="field"><label>Subject / Major</label><input type="text" id="m_subject" placeholder="e.g. Finance, HRM"></div>
+        <div class="field span-2"><label>Institution Name</label><input type="text" id="m_institution" placeholder="Full university or institution name"></div>
+        <div class="field"><label>Institution Category</label><select id="m_inst_cat"><option value="">Select</option><option>Public</option><option>Private</option><option>Foreign Institution</option><option>Not applicable</option></select></div>
+        <div class="field"><label>Result / CGPA / Grade</label><input type="text" id="m_result" placeholder="e.g. CGPA 3.75"></div>
+        <div class="field"><label>Passing Year</label><input type="text" id="m_year" placeholder="e.g. 2018"></div>
+      </div>
+    </div>
+    <div class="degree-card">
+      <div class="degree-card-title"><span class="dot"></span>Bachelor's Degree</div>
+      <div class="grid-4">
+        <div class="field"><label>Degree Name</label><input type="text" id="b_degree" placeholder="e.g. BSc, BBA, BEng"></div>
+        <div class="field"><label>Subject / Major</label><input type="text" id="b_subject" placeholder="e.g. Engineering, BBA"></div>
+        <div class="field span-2"><label>Institution Name</label><input type="text" id="b_institution" placeholder="Full university or institution name"></div>
+        <div class="field"><label>Institution Category</label><select id="b_inst_cat"><option value="">Select</option><option>Public</option><option>Private</option><option>National University Affiliated College</option><option>Foreign Institution</option><option>Not applicable</option></select></div>
+        <div class="field"><label>Result / CGPA / Grade</label><input type="text" id="b_result" placeholder="e.g. CGPA 3.60"></div>
+        <div class="field"><label>Passing Year</label><input type="text" id="b_year" placeholder="e.g. 2015"></div>
+      </div>
+    </div>
+    <div class="degree-card">
+      <div class="degree-card-title"><span class="dot"></span>HSC / Higher Secondary Certificate</div>
+      <div class="grid-4">
+        <div class="field"><label>Group / Subject</label><select id="hsc_group"><option value="">Select</option><option>Science</option><option>Business Studies / Commerce</option><option>Humanities / Arts</option><option>Technical / Vocational</option><option>Other</option><option>Not applicable</option></select></div>
+        <div class="field span-2"><label>Institution Name</label><input type="text" id="hsc_institution" placeholder="Full college or institution name"></div>
+        <div class="field"><label>Institution Category</label><select id="hsc_inst_cat"><option value="">Select</option><option>Government College</option><option>Non-Government College</option><option>Technical / Vocational Institution</option><option>Foreign Institution</option><option>Not applicable</option></select></div>
+        <div class="field"><label>Result / GPA / Grade</label><input type="text" id="hsc_result" placeholder="e.g. GPA 5.00, A+"></div>
+        <div class="field"><label>Passing Year</label><input type="text" id="hsc_year" placeholder="e.g. 2010"></div>
+      </div>
+    </div>
+    <div class="degree-card">
+      <div class="degree-card-title"><span class="dot"></span>SSC / Secondary School Certificate</div>
+      <div class="grid-4">
+        <div class="field"><label>Group / Subject</label><select id="ssc_group"><option value="">Select</option><option>Science</option><option>Business Studies / Commerce</option><option>Humanities / Arts</option><option>Technical / Vocational</option><option>Other</option><option>Not applicable</option></select></div>
+        <div class="field span-2"><label>Institution Name</label><input type="text" id="ssc_institution" placeholder="Full school or institution name"></div>
+        <div class="field"><label>Institution Category</label><select id="ssc_inst_cat"><option value="">Select</option><option>Government School</option><option>Non-Government School</option><option>Technical / Vocational Institution</option><option>Foreign Institution</option><option>Not applicable</option></select></div>
+        <div class="field"><label>Result / GPA / Grade</label><input type="text" id="ssc_result" placeholder="e.g. GPA 5.00, A+"></div>
+        <div class="field"><label>Passing Year</label><input type="text" id="ssc_year" placeholder="e.g. 2008"></div>
+      </div>
+    </div>
+    <div class="degree-card">
+      <div class="degree-card-title"><span class="dot"></span>Diploma / Technical Diploma</div>
+      <div class="grid-4">
+        <div class="field"><label>Diploma Name</label><input type="text" id="dip_degree" placeholder="e.g. Diploma in Engineering"></div>
+        <div class="field"><label>Subject / Trade</label><input type="text" id="dip_subject" placeholder="e.g. Civil, Electrical"></div>
+        <div class="field span-2"><label>Institution Name</label><input type="text" id="dip_institution" placeholder="Full institution name"></div>
+        <div class="field"><label>Institution Category</label><select id="dip_inst_cat"><option value="">Select</option><option>Government Polytechnic Institute</option><option>Private Polytechnic Institute</option><option>Technical / Vocational Institution</option><option>Foreign Institution</option><option>Not applicable</option></select></div>
+        <div class="field"><label>Result / CGPA / Grade</label><input type="text" id="dip_result" placeholder="e.g. CGPA 3.50"></div>
+        <div class="field"><label>Passing Year</label><input type="text" id="dip_year" placeholder="e.g. 2012"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Professional Certifications &amp; Training</div>
+    <div class="grid-2">
+      <div class="field span-full"><label>Certification / Training Name(s)</label><textarea id="cert_names" placeholder="List all relevant certifications or training programs&#10;e.g. PMP, CCNA, Six Sigma, Data Analytics Training"></textarea></div>
+      <div class="field"><label>Issuing Institution / Provider</label><input type="text" id="cert_institution" placeholder="e.g. PMI, Cisco, Coursera"></div>
+      <div class="field"><label>Completion Year</label><input type="text" id="cert_year" placeholder="e.g. 2022"></div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-outline" onclick="prevPage(1)">&larr; Back</button>
+    <span class="page-counter">Step 2 of 6</span>
+    <button class="btn btn-primary" onclick="nextPage(1)">Next &rarr;</button>
+  </div>
+</div>
+
+<!-- PAGE 2 — EXPERIENCE & PERFORMANCE -->
+<div class="page" id="page2">
+  <div class="section-heading">
+    <h2>Experience &amp; Performance</h2>
+    <p>Evaluate the employee's overall qualifications, professional experience, and KPI delivery.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Overall Qualification &amp; Experience</div>
+    <div class="q-block">
+      <div class="q-title">How would you classify the employee's overall educational qualification? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee holds relevant degrees such as BSc, MSc, MBA, Diploma, or equivalent from reputed universities or institutions.</div>
+      <div class="options-grid">
+        <label class="opt-label"><input type="radio" name="edu_qual" value="Excellent relevant degree from reputed university / institution"><div class="opt-dot"></div>Excellent relevant degree from reputed university / institution</label>
+        <label class="opt-label"><input type="radio" name="edu_qual" value="Strong relevant degree from reputed university / institution"><div class="opt-dot"></div>Strong relevant degree from reputed university / institution</label>
+        <label class="opt-label"><input type="radio" name="edu_qual" value="Relevant degree or diploma from recognized institution"><div class="opt-dot"></div>Relevant degree or diploma from recognized institution</label>
+        <label class="opt-label"><input type="radio" name="edu_qual" value="Partially relevant academic qualification"><div class="opt-dot"></div>Partially relevant academic qualification</label>
+        <label class="opt-label"><input type="radio" name="edu_qual" value="Minimum required qualification"><div class="opt-dot"></div>Minimum required qualification</label>
+        <label class="opt-label"><input type="radio" name="edu_qual" value="Below expected qualification"><div class="opt-dot"></div>Below expected qualification</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">How many years of total relevant professional experience does the employee have? <span class="req">*</span></div>
+      <div class="q-desc">Assess the employee's total relevant professional experience, especially from telecommunications or the relevant industry.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="exp_years" value="15 years or above"><div class="opt-dot"></div>15 years or above</label>
+        <label class="opt-label"><input type="radio" name="exp_years" value="10 years or above"><div class="opt-dot"></div>10 years or above</label>
+        <label class="opt-label"><input type="radio" name="exp_years" value="6–9 years"><div class="opt-dot"></div>6–9 years</label>
+        <label class="opt-label"><input type="radio" name="exp_years" value="3–6 years"><div class="opt-dot"></div>3–6 years</label>
+        <label class="opt-label"><input type="radio" name="exp_years" value="1–3 years"><div class="opt-dot"></div>1–3 years</label>
+        <label class="opt-label"><input type="radio" name="exp_years" value="Below 1 year"><div class="opt-dot"></div>Below 1 year</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Please describe the employee's relevant professional experience background. <span class="req">*</span></div>
+      <div class="q-desc">Briefly describe relevant work experience, previous roles, major responsibilities, industry exposure, and functional background.</div>
+      <div class="field"><textarea id="exp_background" placeholder="Describe the employee's work experience, roles, and industry background..." style="min-height:100px;"></textarea></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Performance &amp; Delivery</div>
+    <div class="q-block">
+      <div class="q-title">Current KPI achievement level? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee consistently meets assigned targets and delivers dependable results with minimal supervision.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="kpi_current" value="KPI 90% or above"><div class="opt-dot"></div>KPI 90% or above</label>
+        <label class="opt-label"><input type="radio" name="kpi_current" value="KPI 80% or above"><div class="opt-dot"></div>KPI 80% or above</label>
+        <label class="opt-label"><input type="radio" name="kpi_current" value="KPI 70% or above"><div class="opt-dot"></div>KPI 70% or above</label>
+        <label class="opt-label"><input type="radio" name="kpi_current" value="KPI 60% or above"><div class="opt-dot"></div>KPI 60% or above</label>
+        <label class="opt-label"><input type="radio" name="kpi_current" value="KPI below 60%"><div class="opt-dot"></div>KPI below 60%</label>
+        <label class="opt-label"><input type="radio" name="kpi_current" value="Not applicable"><div class="opt-dot"></div>Not applicable</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Historical KPI performance (last 2 years or more)? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee maintains a stable and consistent performance trajectory with clear evidence of improvement over time.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="kpi_hist" value="Consistent upward trend"><div class="opt-dot"></div>Consistent upward trend</label>
+        <label class="opt-label"><input type="radio" name="kpi_hist" value="Stable performance"><div class="opt-dot"></div>Stable performance</label>
+        <label class="opt-label"><input type="radio" name="kpi_hist" value="Declining performance"><div class="opt-dot"></div>Declining performance</label>
+        <label class="opt-label"><input type="radio" name="kpi_hist" value="Not enough data available"><div class="opt-dot"></div>Not enough data available</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Quality of work? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee produces high-quality output with minimal errors and demonstrates strong attention to detail.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="quality" value="Near-zero rework"><div class="opt-dot"></div>Near-zero rework</label>
+        <label class="opt-label"><input type="radio" name="quality" value="Minor issues"><div class="opt-dot"></div>Minor issues</label>
+        <label class="opt-label"><input type="radio" name="quality" value="Moderate issues"><div class="opt-dot"></div>Moderate issues</label>
+        <label class="opt-label"><input type="radio" name="quality" value="Frequent errors"><div class="opt-dot"></div>Frequent errors</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Timeliness and accountability? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee consistently meets deadlines and takes full ownership of responsibilities.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="timeliness" value="Always ahead of schedule"><div class="opt-dot"></div>Always ahead of schedule</label>
+        <label class="opt-label"><input type="radio" name="timeliness" value="On time"><div class="opt-dot"></div>On time</label>
+        <label class="opt-label"><input type="radio" name="timeliness" value="Needs follow-up"><div class="opt-dot"></div>Needs follow-up</label>
+        <label class="opt-label"><input type="radio" name="timeliness" value="Delays"><div class="opt-dot"></div>Delays</label>
+      </div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-outline" onclick="prevPage(2)">&larr; Back</button>
+    <span class="page-counter">Step 3 of 6</span>
+    <button class="btn btn-primary" onclick="nextPage(2)">Next &rarr;</button>
+  </div>
+</div>
+
+<!-- PAGE 3 — LEADERSHIP & SKILLS -->
+<div class="page" id="page3">
+  <div class="section-heading">
+    <h2>Succession Readiness &amp; Leadership</h2>
+    <p>Evaluate skill readiness for the next role, leadership potential, and strategic thinking.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Skill Readiness for Next Role</div>
+    <div class="q-block">
+      <div class="q-title">Technical or functional skills for the next role? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee demonstrates the required technical knowledge or functional expertise for the next role.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="tech_skills" value="Expert"><div class="opt-dot"></div>Expert</label>
+        <label class="opt-label"><input type="radio" name="tech_skills" value="Strong"><div class="opt-dot"></div>Strong</label>
+        <label class="opt-label"><input type="radio" name="tech_skills" value="Competent"><div class="opt-dot"></div>Competent</label>
+        <label class="opt-label"><input type="radio" name="tech_skills" value="Basic"><div class="opt-dot"></div>Basic</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Learning agility, AI / automation usage, and upskilling behavior? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee practically uses AI tools, embraces process automation, and translates learning into actionable results.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="learning" value="Expert"><div class="opt-dot"></div>Expert</label>
+        <label class="opt-label"><input type="radio" name="learning" value="Regular"><div class="opt-dot"></div>Regular</label>
+        <label class="opt-label"><input type="radio" name="learning" value="Passive"><div class="opt-dot"></div>Passive</label>
+        <label class="opt-label"><input type="radio" name="learning" value="None"><div class="opt-dot"></div>None</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Office tools excellence and data insight skills? <span class="req">*</span></div>
+      <div class="q-desc">Assess command of Microsoft Office tools and ability to transform data into insights.</div>
+      <div class="options-grid">
+        <label class="opt-label"><input type="radio" name="office_tools" value="Advanced proficiency in Excel, PowerPoint, visualization tools"><div class="opt-dot"></div>Advanced proficiency in Excel, PowerPoint, visualization tools</label>
+        <label class="opt-label"><input type="radio" name="office_tools" value="Strong"><div class="opt-dot"></div>Strong</label>
+        <label class="opt-label"><input type="radio" name="office_tools" value="Basic"><div class="opt-dot"></div>Basic</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Level of certifications or capability development? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee has actively pursued learning opportunities or certifications.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="certs" value="Multiple relevant certifications"><div class="opt-dot"></div>Multiple relevant certifications</label>
+        <label class="opt-label"><input type="radio" name="certs" value="One relevant certification"><div class="opt-dot"></div>One relevant certification</label>
+        <label class="opt-label"><input type="radio" name="certs" value="None"><div class="opt-dot"></div>None</label>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Leadership Potential</div>
+    <div class="q-block">
+      <div class="q-title">Decision-making and ownership? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee exhibits independent problem-solving and takes full accountability for decisions and outcomes.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="decision" value="Independent / High impact"><div class="opt-dot"></div>Independent / High impact</label>
+        <label class="opt-label"><input type="radio" name="decision" value="Confident"><div class="opt-dot"></div>Confident</label>
+        <label class="opt-label"><input type="radio" name="decision" value="Avoids responsibility"><div class="opt-dot"></div>Avoids responsibility</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Leadership and team collaboration? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee motivates teams, drives optimal performance, and handles conflicts proactively.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="leadership" value="High"><div class="opt-dot"></div>High</label>
+        <label class="opt-label"><input type="radio" name="leadership" value="Moderate"><div class="opt-dot"></div>Moderate</label>
+        <label class="opt-label"><input type="radio" name="leadership" value="Low"><div class="opt-dot"></div>Low</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Initiative and accountability? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee shows ownership by proactively taking on challenging tasks and completing them with accountability.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="initiative" value="Goes beyond roles and responsibilities"><div class="opt-dot"></div>Goes beyond roles and responsibilities</label>
+        <label class="opt-label"><input type="radio" name="initiative" value="Proactive"><div class="opt-dot"></div>Proactive</label>
+        <label class="opt-label"><input type="radio" name="initiative" value="Reactive"><div class="opt-dot"></div>Reactive</label>
+        <label class="opt-label"><input type="radio" name="initiative" value="Passive"><div class="opt-dot"></div>Passive</label>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Strategic Thinking, Innovation &amp; Adaptability</div>
+    <div class="q-block">
+      <div class="q-title">Strategic alignment? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee ensures initiatives align with organizational goals and evaluates outcomes and trade-offs of strategic decisions.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="strategic" value="Shapes strategy"><div class="opt-dot"></div>Shapes strategy</label>
+        <label class="opt-label"><input type="radio" name="strategic" value="Strong alignment"><div class="opt-dot"></div>Strong alignment</label>
+        <label class="opt-label"><input type="radio" name="strategic" value="No clear alignment"><div class="opt-dot"></div>No clear alignment</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Innovation or process improvement contribution? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee drives process innovation using creative approaches and data-driven insights.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="innovation" value="Drives transformation"><div class="opt-dot"></div>Drives transformation</label>
+        <label class="opt-label"><input type="radio" name="innovation" value="Impactful"><div class="opt-dot"></div>Impactful</label>
+        <label class="opt-label"><input type="radio" name="innovation" value="No visible contribution"><div class="opt-dot"></div>No visible contribution</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Instruction comprehension and execution? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee clearly understands supervisor instructions and translates them into measurable performance improvements.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="comprehension" value="High"><div class="opt-dot"></div>High</label>
+        <label class="opt-label"><input type="radio" name="comprehension" value="Moderate"><div class="opt-dot"></div>Moderate</label>
+        <label class="opt-label"><input type="radio" name="comprehension" value="Low"><div class="opt-dot"></div>Low</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Continuous learning and adaptability? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee stays updated with industry trends and adapts advanced strategies.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="adaptability" value="Highly future-ready"><div class="opt-dot"></div>Highly future-ready</label>
+        <label class="opt-label"><input type="radio" name="adaptability" value="Moderately adaptable"><div class="opt-dot"></div>Moderately adaptable</label>
+        <label class="opt-label"><input type="radio" name="adaptability" value="Resistant to change"><div class="opt-dot"></div>Resistant to change</label>
+      </div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-outline" onclick="prevPage(3)">&larr; Back</button>
+    <span class="page-counter">Step 4 of 6</span>
+    <button class="btn btn-primary" onclick="nextPage(3)">Next &rarr;</button>
+  </div>
+</div>
+
+<!-- PAGE 4 — ORGANIZATIONAL ALIGNMENT -->
+<div class="page" id="page4">
+  <div class="section-heading">
+    <h2>Organizational Alignment &amp; Business Impact</h2>
+    <p>Evaluate collaboration, stakeholder influence, behavioral alignment, and organizational value creation.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Collaboration &amp; Influence</div>
+    <div class="q-block">
+      <div class="q-title">Cross-functional collaboration? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee cooperates effectively across functions and departments to achieve organizational goals.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="collaboration" value="Strong"><div class="opt-dot"></div>Strong</label>
+        <label class="opt-label"><input type="radio" name="collaboration" value="Moderate"><div class="opt-dot"></div>Moderate</label>
+        <label class="opt-label"><input type="radio" name="collaboration" value="Limited collaboration"><div class="opt-dot"></div>Limited collaboration</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Stakeholder management and influence? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee builds credibility with key stakeholders and ensures positive results through negotiation.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="stakeholder" value="Strong"><div class="opt-dot"></div>Strong</label>
+        <label class="opt-label"><input type="radio" name="stakeholder" value="Manages well"><div class="opt-dot"></div>Manages well</label>
+        <label class="opt-label"><input type="radio" name="stakeholder" value="Weak influence"><div class="opt-dot"></div>Weak influence</label>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Behavioral &amp; Cultural Alignment</div>
+    <div class="q-block">
+      <div class="q-title">Integrity and ethics? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee demonstrates honesty, fairness, and avoids conflicts of interest.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="integrity" value="Unquestionable"><div class="opt-dot"></div>Unquestionable</label>
+        <label class="opt-label"><input type="radio" name="integrity" value="Strong"><div class="opt-dot"></div>Strong</label>
+        <label class="opt-label"><input type="radio" name="integrity" value="Minor concerns"><div class="opt-dot"></div>Minor concerns</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Organizational values and policy adherence? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee consistently demonstrates the company's values while adhering to policies and guidelines.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="values" value="High"><div class="opt-dot"></div>High</label>
+        <label class="opt-label"><input type="radio" name="values" value="Moderate"><div class="opt-dot"></div>Moderate</label>
+        <label class="opt-label"><input type="radio" name="values" value="Low"><div class="opt-dot"></div>Low</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Professional conduct and attitude? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee respects colleagues, maintains positive behaviour, and handles feedback constructively.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="conduct" value="Highly professional"><div class="opt-dot"></div>Highly professional</label>
+        <label class="opt-label"><input type="radio" name="conduct" value="Positive"><div class="opt-dot"></div>Positive</label>
+        <label class="opt-label"><input type="radio" name="conduct" value="Negative"><div class="opt-dot"></div>Negative</label>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Organizational Impact &amp; Value Creation</div>
+    <div class="q-block">
+      <div class="q-title">Contribution beyond job scope? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee proactively engages in work beyond core responsibilities and drives additional value.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="beyond_scope" value="High"><div class="opt-dot"></div>High</label>
+        <label class="opt-label"><input type="radio" name="beyond_scope" value="Moderate"><div class="opt-dot"></div>Moderate</label>
+        <label class="opt-label"><input type="radio" name="beyond_scope" value="Low"><div class="opt-dot"></div>Low</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q-block">
+      <div class="q-title">Tangible impact? <span class="req">*</span></div>
+      <div class="q-desc">Assess whether the employee achieves results with visible and quantifiable effects on efficiency, revenue, and operational performance.</div>
+      <div class="options-grid horizontal">
+        <label class="opt-label"><input type="radio" name="impact" value="High"><div class="opt-dot"></div>High</label>
+        <label class="opt-label"><input type="radio" name="impact" value="Moderate"><div class="opt-dot"></div>Moderate</label>
+        <label class="opt-label"><input type="radio" name="impact" value="Low"><div class="opt-dot"></div>Low</label>
+      </div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-outline" onclick="prevPage(4)">&larr; Back</button>
+    <span class="page-counter">Step 5 of 6</span>
+    <button class="btn btn-primary" onclick="nextPage(4)">Next &rarr;</button>
+  </div>
+</div>
+
+<!-- PAGE 5 — FINAL REMARKS -->
+<div class="page" id="page5">
+  <div class="section-heading">
+    <h2>Final Comments &amp; Succession Recommendation</h2>
+    <p>Please provide your overall evaluation and succession readiness recommendation.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Evaluator's Observations</div>
+    <div class="grid-2" style="gap:18px;">
+      <div class="field"><label>Key achievements, contributions, or strengths</label><textarea id="strengths" placeholder="Notable achievements, major contributions, strengths..." style="min-height:110px;"></textarea></div>
+      <div class="field"><label>Development areas or improvement needs</label><textarea id="dev_areas" placeholder="Areas needing further development, training, or improvement..." style="min-height:110px;"></textarea></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Succession Readiness Recommendation</div>
+    <div class="q-block">
+      <div class="q-title">Overall succession readiness classification <span class="req">*</span></div>
+      <div class="q-desc">Based on the full assessment — qualification, experience, performance, leadership potential, adaptability, and organizational impact.</div>
+      <div class="options-grid">
+        <label class="opt-label"><input type="radio" name="succession" value="Ready now"><div class="opt-dot"></div>Ready now</label>
+        <label class="opt-label"><input type="radio" name="succession" value="Ready with minor development"><div class="opt-dot"></div>Ready with minor development</label>
+        <label class="opt-label"><input type="radio" name="succession" value="Ready within 1 year"><div class="opt-dot"></div>Ready within 1 year</label>
+        <label class="opt-label"><input type="radio" name="succession" value="Needs significant development"><div class="opt-dot"></div>Needs significant development</label>
+        <label class="opt-label"><input type="radio" name="succession" value="Not currently suitable for succession"><div class="opt-dot"></div>Not currently suitable for succession</label>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="field"><label>Additional comments from evaluator</label><textarea id="additional_comments" placeholder="Any additional observations, concerns, recommendations, or final remarks..." style="min-height:90px;"></textarea></div>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-outline" onclick="prevPage(5)">&larr; Back</button>
+    <span class="page-counter">Step 6 of 6</span>
+    <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">&#10003; Submit Assessment</button>
+  </div>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">&#10003;</div>
+  <h2>Assessment Submitted Successfully</h2>
+  <p>Thank you. Your assessment has been recorded and will be reviewed as part of the succession planning process.</p>
+</div>
+
+</div>
+
+<script>
+  var currentPage = 0;
+
+  // ── YOUR GOOGLE APPS SCRIPT URL — ALREADY CONNECTED ──
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypgirjhIxQfGDPDnB0SJTqpAGbTQyeOVuEWv2kqI_qCF4X67U4zEzSTUT9oydWvB6deg/exec';
+
+  function showPage(n) {
+    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById('page' + n).classList.add('active');
+    document.querySelectorAll('.prog-step').forEach(function(s, i) {
+      s.classList.remove('active', 'done');
+      if (i < n) s.classList.add('done');
+      if (i === n) s.classList.add('active');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    currentPage = n;
+  }
+
+  function goToPage(n) { if (n <= currentPage) showPage(n); }
+  function nextPage(from) { if (validatePage(from)) showPage(from + 1); }
+  function prevPage(from) { showPage(from - 1); }
+
+  function validatePage(n) {
+    var valid = true;
+    if (n === 0) {
+      ['emp_name','emp_id','department','designation','grade','joining_date','evaluator_name','eval_date'].forEach(function(id) {
+        var el = document.getElementById(id);
+        var field = el.closest('.field');
+        if (!el.value.trim()) { field.classList.add('error'); valid = false; }
+        else { field.classList.remove('error'); }
+      });
+      if (!valid) { window.scrollTo({top:0,behavior:'smooth'}); }
+    }
+    if (n === 2) {
+      var r = ['edu_qual','exp_years','kpi_current','kpi_hist','quality','timeliness'];
+      r.forEach(function(name) { if (!document.querySelector('input[name="'+name+'"]:checked')) valid = false; });
+      if (!document.getElementById('exp_background').value.trim()) valid = false;
+      if (!valid) alert('Please answer all required questions before continuing.');
+    }
+    if (n === 3) {
+      var r = ['tech_skills','learning','office_tools','certs','decision','leadership','initiative','strategic','innovation','comprehension','adaptability'];
+      r.forEach(function(name) { if (!document.querySelector('input[name="'+name+'"]:checked')) valid = false; });
+      if (!valid) alert('Please answer all required questions before continuing.');
+    }
+    if (n === 4) {
+      var r = ['collaboration','stakeholder','integrity','values','conduct','beyond_scope','impact'];
+      r.forEach(function(name) { if (!document.querySelector('input[name="'+name+'"]:checked')) valid = false; });
+      if (!valid) alert('Please answer all required questions before continuing.');
+    }
+    return valid;
+  }
+
+  function collectData() {
+    function val(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
+    function radio(name) { var e = document.querySelector('input[name="'+name+'"]:checked'); return e ? e.value : ''; }
+    return {
+      submitted_at: new Date().toLocaleString(),
+      emp_name: val('emp_name'), emp_id: val('emp_id'),
+      department: val('department'), designation: val('designation'),
+      grade: val('grade'), joining_date: val('joining_date'),
+      evaluator_name: val('evaluator_name'), eval_date: val('eval_date'),
+      masters_degree: val('m_degree'), masters_subject: val('m_subject'),
+      masters_institution: val('m_institution'), masters_inst_cat: val('m_inst_cat'),
+      masters_result: val('m_result'), masters_year: val('m_year'),
+      bachelors_degree: val('b_degree'), bachelors_subject: val('b_subject'),
+      bachelors_institution: val('b_institution'), bachelors_inst_cat: val('b_inst_cat'),
+      bachelors_result: val('b_result'), bachelors_year: val('b_year'),
+      hsc_group: val('hsc_group'), hsc_institution: val('hsc_institution'),
+      hsc_inst_cat: val('hsc_inst_cat'), hsc_result: val('hsc_result'), hsc_year: val('hsc_year'),
+      ssc_group: val('ssc_group'), ssc_institution: val('ssc_institution'),
+      ssc_inst_cat: val('ssc_inst_cat'), ssc_result: val('ssc_result'), ssc_year: val('ssc_year'),
+      diploma_name: val('dip_degree'), diploma_subject: val('dip_subject'),
+      diploma_institution: val('dip_institution'), diploma_inst_cat: val('dip_inst_cat'),
+      diploma_result: val('dip_result'), diploma_year: val('dip_year'),
+      cert_names: val('cert_names'), cert_institution: val('cert_institution'), cert_year: val('cert_year'),
+      edu_qual: radio('edu_qual'), exp_years: radio('exp_years'),
+      exp_background: val('exp_background'),
+      kpi_current: radio('kpi_current'), kpi_hist: radio('kpi_hist'),
+      quality: radio('quality'), timeliness: radio('timeliness'),
+      tech_skills: radio('tech_skills'), learning: radio('learning'),
+      office_tools: radio('office_tools'), certs_level: radio('certs'),
+      decision: radio('decision'), leadership: radio('leadership'),
+      initiative: radio('initiative'), strategic: radio('strategic'),
+      innovation: radio('innovation'), comprehension: radio('comprehension'),
+      adaptability: radio('adaptability'), collaboration: radio('collaboration'),
+      stakeholder: radio('stakeholder'), integrity: radio('integrity'),
+      values: radio('values'), conduct: radio('conduct'),
+      beyond_scope: radio('beyond_scope'), impact: radio('impact'),
+      strengths: val('strengths'), dev_areas: val('dev_areas'),
+      succession: radio('succession'), additional_comments: val('additional_comments')
+    };
+  }
+
+  function submitForm() {
+    if (!document.querySelector('input[name="succession"]:checked')) {
+      alert('Please select the overall succession readiness recommendation before submitting.');
+      return;
+    }
+    var data = collectData();
+    var overlay = document.getElementById('submittingOverlay');
+    var btn = document.getElementById('submitBtn');
+    overlay.classList.add('show');
+    btn.disabled = true;
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function() {
+      overlay.classList.remove('show');
+      document.getElementById('page5').style.display = 'none';
+      document.getElementById('successScreen').classList.add('show');
+      document.querySelector('.progress-bar-wrap').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }).catch(function(err) {
+      overlay.classList.remove('show');
+      btn.disabled = false;
+      alert('Submission failed. Please check your internet connection and try again.\n\nError: ' + err.message);
+    });
+  }
+</script>
+</body>
+</html>
